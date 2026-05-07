@@ -133,6 +133,11 @@ api.get('/users/:userId/transfers', auth, (req, res) => {
   return pGet(`${TRANSFER_SVC}/transfers/user/${req.params.userId}`, res);
 });
 
+// TEMP: fund account for testing
+api.post('/accounts/:accountNumber/fund', (req, res) =>
+  pPost(`${ACCOUNT_SVC}/accounts/${req.params.accountNumber.toUpperCase()}/fund`, req.body, res)
+);
+
 app.use('/api/v1', api);
 
 // ── Central Bank ───────────────────────────────────────────────────────────
