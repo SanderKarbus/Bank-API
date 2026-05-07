@@ -228,11 +228,15 @@ app.post('/transfers', async (req, res) => {
 
   try {
     const jwt = await signJWT({
-      transferId, sourceAccount, destinationAccount,
+      transferId,
+      sourceAccount,
+      destinationAccount,
       amount: parseFloat(amount).toFixed(2),
       currency: srcAcc.currency,
-      senderBankId: BANK_ID,
-      sourceBankId: BANK_ID
+      sourceBankId: BANK_ID,
+      destinationBankId: destBankId,
+      timestamp: new Date().toISOString(),
+      nonce: Math.random().toString(36).substring(2)
     });
 
     // destBank.address = the bank's public API base e.g. https://xxx.up.railway.app/api/v1
