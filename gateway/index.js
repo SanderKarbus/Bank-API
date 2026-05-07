@@ -159,11 +159,18 @@ async function register() {
       timeout:10000
     });
     const text = await r.text();
-    console.log('[gateway] Central Bank raw response:', r.status, text.substring(0, 200));
     let b;
-    try { b = JSON.parse(text); } catch(e) { console.error('[gateway] Response is not JSON:', text.substring(0, 200)); return; }
+    try { b = JSON.parse(text); } catch(e) {
+      // Central Bank returns HTML when address already exists (UNIQUE constraint bug)
+      if (text.includes('UNIQUE constraint') || text.includes('already')) {
+        console.log('[gateway] Already registered (address conflict) — will heartbeat');
+        return;
+      }
+      console.error('[gateway] Response is not JSON:', text.substring(0, 300));
+      return;
+    }
     if (r.status === 201) console.log(`[gateway] Registered ✓  bankId:${b.bankId}  expires:${b.expiresAt}`);
-    else if (r.status === 409) console.log('[gateway] Already registered (409) — sending heartbeat');
+    else if (r.status === 409) console.log('[gateway] Already registered (409) — will heartbeat');
     else console.error('[gateway] Registration failed:', r.status, b);
   } catch(e) { console.error('[gateway] Registration error:', e.message); }
 }
