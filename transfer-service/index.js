@@ -318,6 +318,12 @@ app.get('/transfers/user/:userId', async (req, res) => {
   } catch(e) { return res.status(500).json({ code:'INTERNAL_ERROR', message: e.message }); }
 });
 
+// Debug endpoint — show cache contents
+app.get('/debug/banks', async (req, res) => {
+  const banks = await getBanks();
+  res.json({ count: banks.length, banks: banks.map(b => ({ bankId: b.bankId, address: b.address })) });
+});
+
 const PORT = process.env.PORT || 3003;
 app.listen(PORT, async () => {
   console.log(`[transfer-service] :${PORT}`);
