@@ -155,7 +155,8 @@ async function register() {
     const r = await fetch(`${CENTRAL_BANK_URL}/api/v1/banks`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ name:BANK_NAME, address:BANK_ADDRESS, publicKey }),
-      timeout:10000
+      timeout:10000,
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
     });
     const b = await r.json();
     if (r.status === 201) console.log(`[gateway] Registered ✓  bankId:${b.bankId}  expires:${b.expiresAt}`);
@@ -169,7 +170,8 @@ async function heartbeat() {
     const r = await fetch(`${CENTRAL_BANK_URL}/api/v1/banks/${BANK_ID}/heartbeat`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ timestamp: new Date().toISOString() }),
-      timeout:8000
+      timeout:8000,
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
     });
     if (r.ok) {
       const b = await r.json();
