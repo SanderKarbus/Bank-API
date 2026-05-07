@@ -98,3 +98,14 @@ app.post('/accounts/:accountNumber/credit', (req, res) => {
 
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => console.log(`[account-service] :${PORT}`));
+
+// TEMP: fund account for testing (remove in production)
+app.post('/accounts/:accountNumber/fund', (req, res) => {
+  const acn = req.params.accountNumber.toUpperCase();
+  const amount = parseFloat(req.body?.amount || '1000');
+  const a = db.prepare('SELECT * FROM accounts WHERE account_number=?').get(acn);
+  if (!a) return res.status(404).json({ error: 'Account not found' });
+  const newBal = (parseFloat(a.balance) + amount).toFixed(2);
+  db.prepare('UPDATE accounts SET balance=? WHERE account_number=?').run(newBal, acn);
+  return res.json({ accountNumber: acn, balance: newBal });
+});
