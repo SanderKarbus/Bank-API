@@ -138,8 +138,13 @@ app.use('/api/v1', api);
 // ── Central Bank ───────────────────────────────────────────────────────────
 async function register() {
   let publicKey = '';
-  try { publicKey = fs.readFileSync(PUB_KEY_PATH, 'utf8').trim(); }
-  catch(e) { console.error('[gateway] Cannot read public key:', e.message); }
+  // Support env var for Railway (no file system access to keys)
+  if (process.env.PUBLIC_KEY_CONTENT) {
+    publicKey = process.env.PUBLIC_KEY_CONTENT.trim();
+  } else {
+    try { publicKey = fs.readFileSync(PUB_KEY_PATH, 'utf8').trim(); }
+    catch(e) { console.error('[gateway] Cannot read public key:', e.message); }
+  }
 
   try {
     const r = await fetch(`${CENTRAL_BANK_URL}/api/v1/banks`, {
