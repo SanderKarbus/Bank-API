@@ -234,7 +234,7 @@ app.post('/transfers', async (req, res) => {
       amount: parseFloat(amount).toFixed(2),
       currency: srcAcc.currency,
       sourceBankId: BANK_ID,
-      destinationBankId: destBankId,
+      destinationBankId: destBank.bankId,
       timestamp: new Date().toISOString(),
       nonce: Math.random().toString(36).substring(2)
     });
